@@ -11,31 +11,20 @@ input [DATA_WIDTH-1:0] Ain,
 input [DATA_WIDTH-1:0] Bin,
 output [DATA_WIDTH*3-1:0] Cout
 );
-logic [DATA_WIDTH*2-1:0] out;
-logic [DATA_WIDTH*3-1:0] macout;
-logic [DATA_WIDTH*3-1:0] res;
 
-MULT iMULT (
-	.dataa(Ain),
-	.datab(Bin),
-	.result(out)
-	);
-	
-ADD_SUB iADD_SUB (
-	.dataa(out),
-	.datab(macout),
-	.result(res));
-	
-always @(posedge clk, negedge rst_n) begin
+logic [DATA_WIDTH*3-1:0] result;
+logic [DATA_WIDTH*3-1:0] out;
+assign result = Ain * Bin + out;
+
+always_ff @(posedge clk, negedge rst_n)
   if (~rst_n)
-    macout <= 24'h00000;
+    out <= '0;
   else if (Clr)
-     macout <= 24'h00000;
+    out <= '0;
   else if (En)
-	 macout <= res;
-end
+    out <= result;
 
-assign Cout = macout;
+assign Cout = out;
 
 
 endmodule
